@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junko X | Executor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --surface-color: #0a0a0c;
+            --card-bg: #0c0c0f;
+            --primary-color: #8A2BE2; 
+            --primary-hover: #9b51e0;
+            --discord-color: #5865F2;
+            --discord-hover: #4752c4;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --border-color: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Navbar e Links */
+        nav {
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+        .logo span { color: var(--primary-color); }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+        }
+
+        /* Botões Gerais */
+        .btn {
+            background-color: var(--primary-color);
+            color: white; border: none; padding: 15px 35px;
+            font-size: 1rem; font-weight: 600; border-radius: 8px;
+            cursor: pointer; transition: all 0.3s ease;
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        
+        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-discord { background-color: var(--discord-color); padding: 10px 20px; font-size: 0.95rem;}
+        .btn-discord:hover { background-color: var(--discord-hover); box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3); }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 150px 10% 80px 10%;
+            gap: 50px;
+            min-height: 80vh;
+        }
+
+        .hero-text h1 { font-size: 4rem; margin-bottom: 20px; line-height: 1.1; }
+        .hero-text h1 span { color: var(--primary-color); }
+        .hero-text p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; max-width: 500px;}
+        
+        .api-badge {
+            display: inline-block;
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem; font-weight: 600; margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn-discord {
+            padding: 15px 35px;
+        }
+
+        /* Efeito 3D Hero */
+        .image-container { flex: 1; perspective: 1000px; display: flex; justify-content: center; }
+        .tilt-image {
+            width: 100%; max-width: 550px; border-radius: 12px;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.15);
+            transition: transform 0.1s ease-out; transform-style: preserve-3d;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Info Section (UNC, etc) */
+        .info-section {
+            padding: 0 10% 100px 10%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card h2 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 600; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 30px; }
+        .highlight { color: #fff; font-weight: 600; }
+
+        /* Barras UNC */
+        .stats-container { margin-bottom: 30px; }
+        .stat-item { margin-bottom: 15px; }
+        .stat-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; }
+        .progress-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary-color); border-radius: 10px; box-shadow: 0 0 10px var(--primary-color); }
+
+        /* Feed de Atividade */
+        .activity-feed { display: flex; flex-direction: column; gap: 12px; }
+        .activity-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.02);
+            border-radius: 12px; padding: 15px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-info img { width: 40px; height: 40px; border-radius: 50%; background: #222; }
+        .user-text h4 { font-size: 0.95rem; font-weight: 500; }
+        .user-text span { font-size: 0.8rem; color: var(--text-muted); }
+        .recently { font-size: 0.85rem; font-weight: 600; color: #fff; }
+
+        /* Globo */
+        .globe-container {
+            flex: 1; display: flex; justify-content: center; align-items: flex-end; position: relative;
+            margin-top: 20px;
+        }
+        
+        .globe-glow {
+            position: absolute; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 70%);
+            bottom: -50px; z-index: 1; border-radius: 50%;
+        }
+
+        .globe-img {
+            width: 100%; max-width: 400px; z-index: 2;
+            opacity: 0.8; mix-blend-mode: screen;
+            animation: float 6s ease-in-out infinite; 
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 968px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 120px; }
+            .hero-buttons { justify-content: center; }
+            .info-section { grid-template-columns: 1fr; }
+            .nav-menu { display: none; /* Em telas muito pequenas o menu é ocultado p/ simplificar */ }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR ATUALIZADA -->
+    <nav>
+        <div class="logo">Junko <span>X</span></div>
+        <div class="nav-menu">
+            <!-- Link para a Documentação -->
+            <a href="https://nxght.gitbook.io/velocity" target="_blank" class="nav-link">API Docs</a>
+            
+            <!-- Botão do Discord Menor no Topo -->
+            <a href="#" target="_blank" class="btn btn-discord">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+                </svg>
+                Discord
+            </a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-text">
+            <!-- Link da API Clicável -->
+            <a href="https://nxght.gitbook.io/velocity" target="_blank" style="text-decoration:none;">
+                <div class="api-badge">⚡ Powered by Velocity API (View Docs)</div>
+            </a>
+            <h1>A Nova Era da <span>Execução</span></h1>
+            <p>O executor mais estável do mercado. Desenvolvido para máxima performance e com suporte total a scripts avançados.</p>
+            
+            <!-- ÁREA DOS BOTÕES ATUALIZADA -->
+            <div class="hero-buttons">
+                <button class="btn" id="download-btn">Download Junko X</button>
+                <a href="#" target="_blank" class="btn btn-discord hero-btn-discord">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+                    </svg>
+                    Join Discord
+                </a>
+            </div>
+        </div>
+
+        <div class="image-container" id="tilt-container">
+            <img src="https://i.imgur.com/k91B6m2.png" alt="Interface" class="tilt-image" id="tilt-img">
+        </div>
+    </section>
+
+    <!-- INFO SECTION CONTINUA IGUAL -->
+    <section class="info-section">
+        <div class="card">
+            <h2>100% Free & Powerful</h2>
+            <p>Sem chaves, sem pagamentos. Junko X é gratuito e confiado por <span class="highlight" id="user-counter">903.248</span> usuários globais que já realizaram o download.</p>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-info"><span>UNC Support</span><span>99%</span></div>
+                    <div class="progress-bg"><div class="progress-fill" style="width: 99%;"></div></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-info"><span>sUNC Score</span><span>94%</span></div>
+                    <div class="progress-bg"><div class="progress-fill" style="width: 94%;"></div></div>
+                </div>
+            </div>
+
+            <div class="activity-feed">
+                <div class="activity-item">
+                    <div class="user-info">
+                        <img src="https://tr.rbxcdn.com/38c6edcb50633730ff4cf39ac8859840/150/150/AvatarHeadshot/Png" alt="Avatar">
+                        <div class="user-text">
+                            <h4>creep used Junko X</h4>
+                            <span>Active on Discord</span>
+                        </div>
+                    </div>
+                    <div class="recently">Recently</div>
+                </div>
+                <div class="activity-item">
+                    <div class="user-info">
+                        <img src="https://tr.rbxcdn.com/76ba2c7bb14b0b1442c5ef2a5deba9a5/150/150/AvatarHeadshot/Png" alt="Avatar">
+                        <div class="user-text">
+                            <h4>Cory used Junko X</h4>
+                            <span>Active on Discord</span>
+                        </div>
+                    </div>
+                    <div class="recently">Recently</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Users Worldwide</h2>
+            <p>Junte-se à nossa crescente comunidade de usuários que confiam e usam o Junko X diariamente pelo mundo todo.</p>
+            
+            <div class="globe-container">
+                <div class="globe-glow"></div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Globe_icon_dot_pattern.svg/1024px-Globe_icon_dot_pattern.svg.png" alt="Globo Mundial" class="globe-img" style="filter: invert(1);">
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // LÓGICA DO EFEITO 3D NA FOTO
+        const container = document.getElementById('tilt-container');
+        const img = document.getElementById('tilt-img');
+
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -15; 
+            const rotateY = ((x - centerX) / centerX) * 15;
+            img.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        container.addEventListener('mouseleave', () => {
+            img.style.transition = 'transform 0.5s ease';
+            img.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            setTimeout(() => { img.style.transition = 'transform 0.1s ease-out'; }, 500);
+        });
+
+        // LÓGICA DO CONTADOR
+        const downloadBtn = document.getElementById('download-btn');
+        const counterDisplay = document.getElementById('user-counter');
+        
+        let currentDownloads = localStorage.getItem('junko_downloads') 
+            ? parseInt(localStorage.getItem('junko_downloads')) 
+            : 903248;
+
+        function updateCounterDisplay() {
+            counterDisplay.innerText = currentDownloads.toLocaleString('pt-BR');
+        }
+
+        updateCounterDisplay();
+
+        downloadBtn.addEventListener('click', () => {
+            currentDownloads++;
+            localStorage.setItem('junko_downloads', currentDownloads);
+            updateCounterDisplay();
+            
+            downloadBtn.innerText = "Baixando...";
+            setTimeout(() => { downloadBtn.innerText = "Download Junko X"; }, 2000);
+        });
+    </script>
+</body>
+</html>
